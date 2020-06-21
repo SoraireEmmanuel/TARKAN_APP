@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_vertical"
+    android:gravity="center"
+    android:background="@drawable/fondoregistro"
+    android:orientation="vertical">
+
+
+    <ImageView
+        android:id="@+id/imagenId"
+        android:layout_width="190dp"
+        android:layout_height="190dp"
+        android:background="#00FFFFFF"
+        android:contentDescription="@string/todo"
+        android:onClick="cargarImagen"
+        android:padding="20dp"
+        android:src="@drawable/imagen_no_disponible" />
+
+    <EditText
+        android:id="@+id/usuario"
+        android:padding="10dp"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="@string/usuario"
+        tools:layout_editor_absoluteX="100dp"
+        tools:layout_editor_absoluteY="78dp"
+        android:importantForAutofill="no" />
+
+    <EditText
+        android:padding="10dp"
+        android:id="@+id/nombres"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="@string/nombres"
+        android:importantForAutofill="no" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="250dp"
+        android:layout_height="44dp"
+        android:spinnerMode="dialog"
+        android:padding="10dp"/>
+
+    <EditText
+        android:id="@+id/telefono"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/telefono"
+        android:inputType="phone" />
+
+</LinearLayout>

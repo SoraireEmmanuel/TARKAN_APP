@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+
+    android:background="@drawable/fondoregistro"
+    tools:context=".ui.proyectos.CrearProyecto">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:text="@string/nomproyect"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/cardview_light_background"
+        android:layout_marginStart="30dp"/>
+    <EditText
+        android:id="@+id/nombreNuevoProyecto"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:textSize="15sp"
+        android:layout_marginEnd="20sp"
+        android:textColor="@color/cardview_light_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+</LinearLayout>

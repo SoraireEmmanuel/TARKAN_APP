@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@drawable/fondoregistro"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.tareas.AgregarTareaActivity">
+
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+
+            <EditText
+                android:textColor="@color/cardview_light_background"
+                android:id="@+id/tituloAgregarTarea"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:hint="@string/titulo_de_la_tarea"
+                android:paddingStart="10dp"
+                 android:textSize="20sp" />
+
+
+            <EditText
+                android:textColor="@color/cardview_light_background"
+                android:id="@+id/descripcionNuevaTarea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:ems="10"
+                android:textSize="20dp"
+                android:gravity="start|top"
+                android:hint="@string/descripcion_de_la_tarea"
+                android:inputType="textMultiLine"
+                android:paddingLeft="10dp" />
+
+            <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+                android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/prioridad"
+                android:textColor="@color/cardview_light_background"
+                android:textSize="20dp" />
+
+                <Spinner
+                    android:id="@+id/spinnerPrioridadNuevatarea"
+                    style="?android:attr/spinnerDropDownItemStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:foregroundTint="#FFFFFF"
+                    android:spinnerMode="dialog"
+                    android:textAlignment="center" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:textColor="@color/cardview_light_background"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fecha"
+                android:textSize="20sp" />
+
+            <TextView
+                android:textColor="@color/cardview_light_background"
+                android:id="@+id/fechanuevatarea"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        </LinearLayout>
+</ScrollView>
+</LinearLayout>

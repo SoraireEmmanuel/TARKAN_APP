@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/fondoregistro"
+    tools:context=".ui.informacion.InformacionFragment">
+
+    <TextView
+        android:id="@+id/textinfo1"
+        android:layout_marginTop="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textColor="@color/cardview_light_background"
+        android:text="@string/desarrolladores"
+         />
+
+    <TextView
+        android:id="@+id/textinfo2"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#CFCFCF"
+        android:text="@string/desarrollador1"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/textinfo3"
+        android:textColor="#CFCFCF"
+        android:layout_marginTop="20dp"
+        android:textAlignment="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/desarrollador2" />
+
+    <TextView
+        android:id="@+id/textinfo4"
+        android:layout_marginTop="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/materia"
+        android:textAlignment="center"
+        android:textColor="@color/cardview_light_background"
+        android:textSize="20sp"
+/>
+
+    <TextView
+        android:id="@+id/textinfo5"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#CFCFCF"
+        android:text="@string/nombreMateria"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/textinfo6"
+        android:layout_marginTop="20dp"
+        android:textColor="#CFCFCF"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/trabajoFinal"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/textinfo7"
+        android:layout_marginTop="20dp"
+        android:textColor="#CFCFCF"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/utn"
+        android:textAlignment="center" />
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="40dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ubicacion"
+        />
+    <TextView
+        android:id="@+id/textinfo9"
+        android:layout_marginTop="20dp"
+        android:textColor="#CFCFCF"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/visitanos"
+        android:textAlignment="center" />
+
+</LinearLayout>

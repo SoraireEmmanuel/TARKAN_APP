@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.organizadortareaskanban">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="Tarea K"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".ui.usuarios.UsuarioActivity"
+            android:label="Usuario"
+            android:parentActivityName=".ui.tareas.VerTareaActivity"/>
+        <activity
+            android:name=".ui.tareas.MisTareasActivity"
+            android:label="Mis Tareas"
+            android:parentActivityName=".ui.tareas.TareasActivity" />
+        <activity
+            android:name=".ui.proyectos.BuscarProyectoActivity"
+            android:label="Todos los Proyectos"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ui.tareas.VerTareaActivity"
+            android:label="Tarea"
+            android:parentActivityName=".ui.tareas.TareasActivity" />
+        <activity
+            android:name=".ui.tareas.AgregarTareaActivity"
+            android:label="Nueva Tarea"
+            android:parentActivityName=".ui.tareas.TareasActivity" />
+        <activity
+            android:name=".ui.tareas.TareasActivity"
+            android:label="Tablero"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".ui.arranquedelsistema.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.proyectos.CrearProyecto"
+            android:label="Nuevo Proyecto"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ui.arranquedelsistema.RegistrarActivity"
+            android:label="Registro" />
+        <activity
+            android:name=".MainActivity"
+            android:label="Mis Proyectos"
+            android:theme="@style/AppTheme.NoActionBar" />
+    </application>
+
+</manifest>
