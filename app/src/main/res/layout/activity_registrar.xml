@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_vertical"
-    android:gravity="center"
+    android:gravity="center_horizontal"
     android:background="@drawable/fondoregistro"
     android:orientation="vertical">
 
@@ -23,6 +23,7 @@
     <EditText
         android:id="@+id/usuario"
         android:padding="10dp"
+        android:textColor="@color/cardview_light_background"
         android:layout_width="250dp"
         android:layout_height="40dp"
         android:ems="10"
@@ -34,6 +35,7 @@
 
     <EditText
         android:padding="10dp"
+        android:textColor="@color/cardview_light_background"
         android:id="@+id/nombres"
         android:layout_width="250dp"
         android:layout_height="40dp"
@@ -44,13 +46,17 @@
 
     <Spinner
         android:id="@+id/spinner"
+        style="?android:attr/spinnerDropDownItemStyle"
         android:layout_width="250dp"
+        android:textAlignment="center"
+        android:foregroundTint="#FFFFFF"
         android:layout_height="44dp"
         android:spinnerMode="dialog"
         android:padding="10dp"/>
 
     <EditText
         android:id="@+id/telefono"
+        android:textColor="@color/cardview_light_background"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:ems="10"

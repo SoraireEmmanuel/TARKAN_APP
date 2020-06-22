@@ -10,6 +10,11 @@
          intent action.
     -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+
 
     <application
         android:allowBackup="true"
@@ -57,11 +62,23 @@
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".ui.arranquedelsistema.RegistrarActivity"
-            android:label="Registro" />
+            android:label="Registro"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MainActivity"
             android:label="Mis Proyectos"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.android.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths">
+            </meta-data>
+        </provider>
     </application>
 
 </manifest>

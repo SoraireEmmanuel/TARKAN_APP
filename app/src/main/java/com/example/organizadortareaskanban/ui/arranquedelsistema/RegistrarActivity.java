@@ -1,17 +1,20 @@
 package com.example.organizadortareaskanban.ui.arranquedelsistema;
 
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -26,8 +29,13 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.example.organizadortareaskanban.MainActivity;
 import com.example.organizadortareaskanban.R;
@@ -37,6 +45,11 @@ import com.example.organizadortareaskanban.database.Utilidades;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.Manifest.permission_group.CAMERA;
 
 public class RegistrarActivity extends AppCompatActivity {
 
@@ -124,6 +137,70 @@ public class RegistrarActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(),"DNI registro:"+idResultante,Toast.LENGTH_SHORT).show();
     }
 
+    //Método para crear un nombre único de cada fotografia version sdk mayor o igual a M
+    String mCurrentPhotoPath;
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "Backup_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    //Método para tomar foto y crear el archivo
+    static final int REQUEST_TAKE_PHOTO = 1;
+    public void tomarFoto2() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,"com.example.android.fileprovider", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+
+
+    //Método para mostrar vista previa en un imageview de la foto tomada
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if ( resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case COD_SELECCIONADA:
+                    Uri miPath = data.getData();
+                    imagen.setImageURI(miPath);
+                    try {
+                        imgByte = MediaStore.Images.Media.getBitmap(this.getContentResolver(), miPath);
+                        bandera = true;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case REQUEST_IMAGE_CAPTURE:
+                    Bundle extras = data.getExtras();
+                    imgByte = (Bitmap) extras.get("data");
+                    imagen.setImageBitmap(imgByte);
+                    bandera = true;
+                    break;
+
+
+            }
+        }
+    }
 
     //metodos para la carga de foto para versiones de android 5.1 Lollipop o menores
     public void cargarImagen(View view) {
@@ -135,11 +212,36 @@ public class RegistrarActivity extends AppCompatActivity {
         final AlertDialog.Builder alertOpcion=new AlertDialog.Builder(RegistrarActivity.this);
         alertOpcion.setTitle("Seleccione una Opcion");
         alertOpcion.setItems(opciones, new DialogInterface.OnClickListener() {
+
             @Override
             public void onClick(DialogInterface dialog, int i) {
-                if(opciones[i].equals("Tomar Foto")){
-                    tomarFoto();
+                if(opciones[i].equals("Tomar Foto")) {
+                    if (ContextCompat.checkSelfPermission(RegistrarActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                            PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(RegistrarActivity.this, Manifest.permission.CAMERA)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(RegistrarActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 1000);
+
+                    } else {
+                        tomarFoto2();
+                    }
+
                 }
+
+/*
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                        tomarFoto2();
+                    }else
+                     {
+                        if ((checkSelfPermission(CAMERA) == PackageManager.PERMISSION_GRANTED) &&
+                                (checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+                            tomarFoto2();
+                        }
+                        if ((shouldShowRequestPermissionRationale(CAMERA)) ||
+                                (shouldShowRequestPermissionRationale(WRITE_EXTERNAL_STORAGE))) {
+                            cargarDialogoRecomendacion();
+                        }
+                    }
+                }*/
                 else{
                     if(opciones[i].equals("Cargar Imagen")){
                         Intent intent= new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -151,8 +253,48 @@ public class RegistrarActivity extends AppCompatActivity {
                     }
                 }
             }
+
+
+            private void cargarDialogoRecomendacion() {
+            AlertDialog.Builder dialog= new AlertDialog.Builder(RegistrarActivity.this);
+            dialog.setTitle("Permisos Desactivados");
+            dialog.setMessage("Debe aceptar los permisos para el correcto funcionamiento de la APP ");
+            dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        ActivityCompat.requestPermissions(RegistrarActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 1000);
+
+                        }
+                }
+            });
+            dialog.show();
+            }
         });
         alertOpcion.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode==1000) {
+            if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                tomarFoto2();
+            }
+        }
+    }
+/*
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode==100){
+            if(grantResults.length==2 && grantResults[0]==PackageManager.PERMISSION_GRANTED
+            && grantResults[1]==PackageManager.PERMISSION_GRANTED){
+                tomarFoto2();
+            }
+
+        }
     }
 
     private void tomarFoto() {
@@ -171,8 +313,8 @@ public class RegistrarActivity extends AppCompatActivity {
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imag));
         startActivityForResult(intent,COD_FOTO);
     }
-
-
+*/
+/*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -204,7 +346,7 @@ public class RegistrarActivity extends AppCompatActivity {
         }
     }
 
-
+*/
 
     @Override public  boolean onCreateOptionsMenu(Menu mimenu){
         getMenuInflater().inflate(R.menu.crearobjeto, mimenu);
@@ -249,7 +391,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values1.put(Utilidades.CAMPO_TELEFONO,"221-3245238");
         values1.put(Utilidades.CAMPO_FOTO, imagenbaron);
         Long idResultante1=db.insert(Utilidades.TABLA_USUARIOS,Utilidades.CAMPO_USUARIO,values1);
-        Toast.makeText(getApplicationContext(),"Creacion usuario :"+idResultante1,Toast.LENGTH_SHORT).show();
 
         //usuario 2
         ContentValues values2=new ContentValues();
@@ -259,7 +400,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values2.put(Utilidades.CAMPO_TELEFONO,campoTelefono.getText().toString());
         values2.put(Utilidades.CAMPO_FOTO, imagenmujer);
         Long idResultante2=db.insert(Utilidades.TABLA_USUARIOS,Utilidades.CAMPO_USUARIO,values2);
-        Toast.makeText(getApplicationContext(),"Creacion usuario :"+idResultante2,Toast.LENGTH_SHORT).show();
 
         //usuario 3
         ContentValues values3=new ContentValues();
@@ -269,7 +409,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values3.put(Utilidades.CAMPO_TELEFONO,"221-7634107");
         values3.put(Utilidades.CAMPO_FOTO, imagenmujer);
         Long idResultante3=db.insert(Utilidades.TABLA_USUARIOS,Utilidades.CAMPO_USUARIO,values3);
-        Toast.makeText(getApplicationContext(),"Creacion usuario :"+idResultante3,Toast.LENGTH_SHORT).show();
 
         //usuario 4
         ContentValues values4=new ContentValues();
@@ -279,7 +418,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values4.put(Utilidades.CAMPO_TELEFONO,"221-7843260");
         values4.put(Utilidades.CAMPO_FOTO, imagenbaron);
         Long idResultante4=db.insert(Utilidades.TABLA_USUARIOS,Utilidades.CAMPO_USUARIO,values4);
-        Toast.makeText(getApplicationContext(),"Creacion usuario :"+idResultante4,Toast.LENGTH_SHORT).show();
         //usuario 5
         ContentValues values5=new ContentValues();
         values5.put(Utilidades.CAMPO_USUARIO,"JoseFinaP@gmail.com");
@@ -288,7 +426,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values5.put(Utilidades.CAMPO_TELEFONO,"221-4329832");
         values5.put(Utilidades.CAMPO_FOTO, imagenmujer);
         Long idResultante5=db.insert(Utilidades.TABLA_USUARIOS,Utilidades.CAMPO_USUARIO,values5);
-        Toast.makeText(getApplicationContext(),"Creacion usuario :"+idResultante5,Toast.LENGTH_SHORT).show();
 
         /*
         * Crea 2 Proyectos para la prueba
@@ -300,7 +437,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values6.put(Utilidades.CAMPO_NOMBRE_PROYECTO,"Proyecto Booking");
         values6.put(Utilidades.CAMPO_FECHA_PROYECTO,"01/04/2020");
         Long idResultante6=db.insert(Utilidades.TABLA_PROYECTOS,Utilidades.CAMPO_ID_PROYECTO,values6);
-        Toast.makeText(getApplicationContext(),"Creacion proyecto:"+idResultante6,Toast.LENGTH_SHORT).show();
 
         //proyecto 2
         ContentValues values7=new ContentValues();
@@ -308,7 +444,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values7.put(Utilidades.CAMPO_NOMBRE_PROYECTO,"Proyecto TARKAN");
         values7.put(Utilidades.CAMPO_FECHA_PROYECTO,"22/04/2020");
         Long idResultante7=db.insert(Utilidades.TABLA_PROYECTOS,Utilidades.CAMPO_ID_PROYECTO,values7);
-        Toast.makeText(getApplicationContext(),"Creacion proyecto:"+idResultante7,Toast.LENGTH_SHORT).show();
 
         /*
         *Creacion relaciones entre Usuario y proyecto
@@ -317,37 +452,31 @@ public class RegistrarActivity extends AppCompatActivity {
         values8.put(Utilidades.CAMPO_ID_PROYECTO,"1");
         values8.put(Utilidades.CAMPO_ID_USUARIO,"JuanOliv@gmail.com");
         Long idResultante8=db.insert(Utilidades.TABLA_RELACION_PROYECTO,Utilidades.CAMPO_ID_PROYECTO,values8);
-        Toast.makeText(getApplicationContext(),"Creacion Relacion usuario 1 con proyecto 1:"+idResultante8,Toast.LENGTH_SHORT).show();
 
         ContentValues values9=new ContentValues();
         values9.put(Utilidades.CAMPO_ID_PROYECTO,"1");
         values9.put(Utilidades.CAMPO_ID_USUARIO,"MariaCas@gmail.com");
         Long idResultante9=db.insert(Utilidades.TABLA_RELACION_PROYECTO,Utilidades.CAMPO_ID_PROYECTO,values9);
-        Toast.makeText(getApplicationContext(),"Creacion Relacion usuario 2 con proyecto 1:"+idResultante9,Toast.LENGTH_SHORT).show();
 
              ContentValues values10=new ContentValues();
         values10.put(Utilidades.CAMPO_ID_PROYECTO,"1");
         values10.put(Utilidades.CAMPO_ID_USUARIO,"LuciaVit@gmail.com");
         Long idResultante10=db.insert(Utilidades.TABLA_RELACION_PROYECTO,Utilidades.CAMPO_ID_PROYECTO,values10);
-        Toast.makeText(getApplicationContext(),"Creacion Relacion usuario 3 con proyecto 1:"+idResultante10,Toast.LENGTH_SHORT).show();
 
         ContentValues values11=new ContentValues();
         values11.put(Utilidades.CAMPO_ID_PROYECTO,"2");
         values11.put(Utilidades.CAMPO_ID_USUARIO,"LuciaVit@gmail.com");
         Long idResultante11=db.insert(Utilidades.TABLA_RELACION_PROYECTO,Utilidades.CAMPO_ID_PROYECTO,values11);
-        Toast.makeText(getApplicationContext(),"Creacion Relacion usuario 3 con proyecto 2:"+idResultante11,Toast.LENGTH_SHORT).show();
 
         ContentValues values12=new ContentValues();
         values12.put(Utilidades.CAMPO_ID_PROYECTO,"2");
         values12.put(Utilidades.CAMPO_ID_USUARIO,"FranVilla@gmail.com");
         Long idResultante12=db.insert(Utilidades.TABLA_RELACION_PROYECTO,Utilidades.CAMPO_ID_PROYECTO,values12);
-        Toast.makeText(getApplicationContext(),"Creacion Relacion usuario 4 con proyecto 2:"+idResultante12,Toast.LENGTH_SHORT).show();
 
         ContentValues values13=new ContentValues();
         values13.put(Utilidades.CAMPO_ID_PROYECTO,"2");
         values13.put(Utilidades.CAMPO_ID_USUARIO,"JoseFinaP@gmail.com");
         Long idResultante13=db.insert(Utilidades.TABLA_RELACION_PROYECTO,Utilidades.CAMPO_ID_PROYECTO,values13);
-        Toast.makeText(getApplicationContext(),"Creacion Relacion usuario 5 con proyecto 2:"+idResultante13,Toast.LENGTH_SHORT).show();
 
         /*
         *Creacion de Tareas
@@ -365,8 +494,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values14.put(Utilidades.CAMPO_ESTADO,"Iniciada");
         values14.put(Utilidades.CAMPO_PROYECTO,"1");
         Long idResultante14=db.insert(Utilidades.TABLA_TAREAS,Utilidades.CAMPO_ID,values14);
-        Toast.makeText(getApplicationContext(),"Creacion tarea:"+idResultante14,Toast.LENGTH_SHORT).show();
-
         //tarea 2
         ContentValues values15=new ContentValues();
         values15.put(Utilidades.CAMPO_ID,2);
@@ -380,7 +507,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values15.put(Utilidades.CAMPO_ESTADO,"Ejecutada");
         values15.put(Utilidades.CAMPO_PROYECTO,"1");
         Long idResultante15=db.insert(Utilidades.TABLA_TAREAS,Utilidades.CAMPO_ID,values15);
-        Toast.makeText(getApplicationContext(),"Creacion tarea:"+idResultante15,Toast.LENGTH_SHORT).show();
 
 
         //tarea 3
@@ -396,7 +522,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values16.put(Utilidades.CAMPO_ESTADO,"Ejecutada");
         values16.put(Utilidades.CAMPO_PROYECTO,"1");
         Long idResultante16=db.insert(Utilidades.TABLA_TAREAS,Utilidades.CAMPO_ID,values16);
-        Toast.makeText(getApplicationContext(),"Creacion tarea:"+idResultante16,Toast.LENGTH_SHORT).show();
 
         //tarea 4
         ContentValues values17=new ContentValues();
@@ -411,7 +536,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values17.put(Utilidades.CAMPO_ESTADO,"Esperada");
         values17.put(Utilidades.CAMPO_PROYECTO,"1");
         Long idResultante17=db.insert(Utilidades.TABLA_TAREAS,Utilidades.CAMPO_ID,values17);
-        Toast.makeText(getApplicationContext(),"Creacion tarea:"+idResultante17,Toast.LENGTH_SHORT).show();
 
         //tarea 5
         ContentValues values18=new ContentValues();
@@ -426,7 +550,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values18.put(Utilidades.CAMPO_ESTADO,"Revisada");
         values18.put(Utilidades.CAMPO_PROYECTO,"1");
         Long idResultante18=db.insert(Utilidades.TABLA_TAREAS,Utilidades.CAMPO_ID,values18);
-        Toast.makeText(getApplicationContext(),"Creacion tarea:"+idResultante18,Toast.LENGTH_SHORT).show();
 
         //tarea 6
         ContentValues values19=new ContentValues();
@@ -441,7 +564,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values19.put(Utilidades.CAMPO_ESTADO,"Iniciada");
         values19.put(Utilidades.CAMPO_PROYECTO,"2");
         Long idResultante19=db.insert(Utilidades.TABLA_TAREAS,Utilidades.CAMPO_ID,values19);
-        Toast.makeText(getApplicationContext(),"Creacion tarea:"+idResultante19,Toast.LENGTH_SHORT).show();
 
         //tarea 7
         ContentValues values20=new ContentValues();
@@ -456,8 +578,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values20.put(Utilidades.CAMPO_ESTADO,"Ejecutada");
         values20.put(Utilidades.CAMPO_PROYECTO,"2");
         Long idResultante20=db.insert(Utilidades.TABLA_TAREAS,Utilidades.CAMPO_ID,values20);
-        Toast.makeText(getApplicationContext(),"Creacion tarea:"+idResultante20,Toast.LENGTH_SHORT).show();
-
         //tarea 8
         ContentValues values21=new ContentValues();
         values21.put(Utilidades.CAMPO_ID,8);
@@ -471,7 +591,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values21.put(Utilidades.CAMPO_ESTADO,"Esperada");
         values21.put(Utilidades.CAMPO_PROYECTO,"2");
         Long idResultante21=db.insert(Utilidades.TABLA_TAREAS,Utilidades.CAMPO_ID,values21);
-        Toast.makeText(getApplicationContext(),"Creacion tarea:"+idResultante21,Toast.LENGTH_SHORT).show();
 
         //tarea 9
         ContentValues values22=new ContentValues();
@@ -486,7 +605,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values22.put(Utilidades.CAMPO_ESTADO,"Esperada");
         values22.put(Utilidades.CAMPO_PROYECTO,"2");
         Long idResultante22=db.insert(Utilidades.TABLA_TAREAS,Utilidades.CAMPO_ID,values22);
-        Toast.makeText(getApplicationContext(),"Creacion tarea:"+idResultante22,Toast.LENGTH_SHORT).show();
 
         //tarea 10
         ContentValues values23=new ContentValues();
@@ -501,7 +619,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values23.put(Utilidades.CAMPO_ESTADO,"Esperada");
         values23.put(Utilidades.CAMPO_PROYECTO,"2");
         Long idResultante23=db.insert(Utilidades.TABLA_TAREAS,Utilidades.CAMPO_ID,values23);
-        Toast.makeText(getApplicationContext(),"Creacion tarea:"+idResultante23,Toast.LENGTH_SHORT).show();
         //tarea 11
         ContentValues values24=new ContentValues();
         values24.put(Utilidades.CAMPO_ID,11);
@@ -515,7 +632,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values24.put(Utilidades.CAMPO_ESTADO,"Revisada");
         values24.put(Utilidades.CAMPO_PROYECTO,"2");
         Long idResultante24=db.insert(Utilidades.TABLA_TAREAS,Utilidades.CAMPO_ID,values24);
-        Toast.makeText(getApplicationContext(),"Creacion tarea:"+idResultante24,Toast.LENGTH_SHORT).show();
 
         //tarea 12
         ContentValues values25=new ContentValues();
@@ -530,7 +646,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values25.put(Utilidades.CAMPO_ESTADO,"Revisada");
         values25.put(Utilidades.CAMPO_PROYECTO,"1");
         Long idResultante25=db.insert(Utilidades.TABLA_TAREAS,Utilidades.CAMPO_ID,values25);
-        Toast.makeText(getApplicationContext(),"Creacion tarea:"+idResultante25,Toast.LENGTH_SHORT).show();
 
         //tarea 13
         ContentValues values26=new ContentValues();
@@ -545,6 +660,6 @@ public class RegistrarActivity extends AppCompatActivity {
         values26.put(Utilidades.CAMPO_ESTADO,"Finalizada");
         values26.put(Utilidades.CAMPO_PROYECTO,"2");
         Long idResultante26=db.insert(Utilidades.TABLA_TAREAS,Utilidades.CAMPO_ID,values26);
-        Toast.makeText(getApplicationContext(),"Creacion tarea:"+idResultante26,Toast.LENGTH_SHORT).show();
+
     }
 }
