@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/fondoregistro"
-    tools:context=".ui.usuarios.UsuarioActivity">
+    tools:context=".ui.usuarios.UsuariosActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleUsuario"
-        android:layout_margin="20sp"
+        android:layout_margin="5sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

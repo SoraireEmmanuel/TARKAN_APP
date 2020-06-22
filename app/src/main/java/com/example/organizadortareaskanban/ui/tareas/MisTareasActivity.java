@@ -55,18 +55,27 @@ public class MisTareasActivity extends AppCompatActivity implements  BusquedaTar
             Cursor c = db.query(Utilidades.TABLA_TAREAS, proyeccion,
                     selection, selectionArg, null, null, null);
             c.moveToFirst();
-            if(c.getString(5).equals(usuariosharepreference)){
-                misTareas.add(new Tarea(c.getInt(0), c.getString(1), c.getString(2), c.getString(3),c.getString(4)));
+            if(c.getString(4).equals("Ejecutada") ) {
+                if (c.getString(5).equals(usuariosharepreference)) {
+                    misTareas.add(new Tarea(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4)));
+                }
             }
-            if(c.getString(6).equals(usuariosharepreference)){
-                misTareas.add(new Tarea(c.getInt(0), c.getString(1), c.getString(2), c.getString(3),c.getString(4)));
+            if(c.getString(4).equals("Revisada")) {
+                if (c.getString(6).equals(usuariosharepreference)) {
+                    misTareas.add(new Tarea(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4)));
+                }
             }
             while (c.moveToNext()){
-                if(c.getString(5).equals(usuariosharepreference)){
-                    misTareas.add(new Tarea(c.getInt(0), c.getString(1), c.getString(2), c.getString(3),c.getString(4)));
+                if(c.getString(4).equals("Ejecutada") ) {
+                    if (c.getString(5).equals(usuariosharepreference)) {
+                        misTareas.add(new Tarea(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4)));
+                    }
+
                 }
-                if(c.getString(6).equals(usuariosharepreference)){
-                    misTareas.add(new Tarea(c.getInt(0), c.getString(1), c.getString(2), c.getString(3),c.getString(4)));
+                if(c.getString(4).equals("Revisada")) {
+                    if (c.getString(6).equals(usuariosharepreference)) {
+                        misTareas.add(new Tarea(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4)));
+                    }
                 }
             }
 

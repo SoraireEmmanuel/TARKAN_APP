@@ -3,14 +3,18 @@ package com.example.organizadortareaskanban.ui.tareas;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -23,14 +27,17 @@ import com.example.organizadortareaskanban.database.ConexionSQLiteHelper;
 import com.example.organizadortareaskanban.database.Utilidades;
 import com.example.organizadortareaskanban.entidades.Tarea;
 import com.example.organizadortareaskanban.ui.proyectos.BuscarProyectoActivity;
+import com.example.organizadortareaskanban.ui.usuarios.UsuariosActivity;
 
 import org.w3c.dom.Text;
 
 public class VerTareaActivity extends AppCompatActivity {
+    final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 10;
     TextView titulo, descripcion, estado, prioridad, fecha, creador, desarrolador, testeador;
     private Integer tareaSharePreference;
     Button revisar, termine, realizar;
     private String usuariosharepreference;
+    private String telefono;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -233,5 +240,136 @@ public class VerTareaActivity extends AppCompatActivity {
         }
         }
 
+public void creador(View view) {
+    final ConexionSQLiteHelper conex = new ConexionSQLiteHelper(this, "bd_usuario", null, 1);
+    SQLiteDatabase db = conex.getReadableDatabase();
+
+    String[] proyeccion2 = {Utilidades.CAMPO_TELEFONO};
+    String selection2 = Utilidades.CAMPO_USUARIO + " = ?";
+    String[] selectionArg2 = {creador.getText().toString()};
+    try {
+
+        Cursor c = db.query(Utilidades.TABLA_USUARIOS, proyeccion2,
+                selection2, selectionArg2, null, null, null);
+        c.moveToFirst();
+        llamar(c.getInt(0),creador.getText().toString());
+
+    } catch (Exception e) {
+
+    }
+}
+
+public void revisador(View view){
+        final ConexionSQLiteHelper conex = new ConexionSQLiteHelper(this, "bd_usuario", null, 1);
+    SQLiteDatabase db = conex.getReadableDatabase();
+
+    String[] proyeccion2 = {Utilidades.CAMPO_TELEFONO};
+    String selection2 = Utilidades.CAMPO_USUARIO + " = ?";
+    String[] selectionArg2 = {testeador.getText().toString()};
+try {
+    Cursor c = db.query(Utilidades.TABLA_USUARIOS, proyeccion2,
+            selection2, selectionArg2, null, null, null);
+    c.moveToFirst();
+    llamar(c.getInt(0),testeador.getText().toString());
+}catch (Exception e){
+
+}
+}
+public void realizador(View view) {
+    final ConexionSQLiteHelper conex = new ConexionSQLiteHelper(this, "bd_usuario", null, 1);
+    SQLiteDatabase db = conex.getReadableDatabase();
+
+    String[] proyeccion2 = {Utilidades.CAMPO_TELEFONO};
+    String selection2 = Utilidades.CAMPO_USUARIO + " = ?";
+    String[] selectionArg2 = {desarrolador.getText().toString()};
+    try {
+        Cursor c = db.query(Utilidades.TABLA_USUARIOS, proyeccion2,
+                selection2, selectionArg2, null, null, null);
+        c.moveToFirst();
+        llamar(c.getInt(0),desarrolador.getText().toString());
+    } catch (Exception e) {
+
+    }
+}
+
+
+    public void llamar(final Integer id, final String destinatario) {
+        telefono=String.valueOf(id);
+        final CharSequence[] opciones = {"Llamar", "Enviar Mail", "Cancelar"};
+        final AlertDialog.Builder alertOpcion = new AlertDialog.Builder(VerTareaActivity.this);
+        alertOpcion.setTitle("Seleccione una Opcion");
+        alertOpcion.setItems(opciones, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                if (opciones[i].equals("Llamar")) {
+                    if (ActivityCompat.checkSelfPermission
+                            (VerTareaActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(VerTareaActivity.this, new String[]
+                                {Manifest.permission.CALL_PHONE}, MY_PERMISSIONS_REQUEST_CALL_PHONE);
+
+                    } else {
+                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+telefono));
+                        startActivity(intent);
+
+                    }
+                } else {
+                    if (opciones[i].equals("Enviar Mail")) {
+                        String enviarcorreo = destinatario;
+
+
+                        // Defino mi Intent y hago uso del objeto ACTION_SEND
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+
+                        // Defino los Strings Email, Asunto y Mensaje con la función putExtra
+                        intent.putExtra(Intent.EXTRA_EMAIL,
+                                new String[] { enviarcorreo });
+
+                        // Establezco el tipo de Intent
+                        intent.setType("message/rfc822");
+
+                        // Lanzo el selector de cliente de Correo
+                        startActivity(
+                                Intent
+                                        .createChooser(intent,
+                                                "Elije un cliente de Correo:"));
+
+
+                    } else {
+                        dialog.dismiss();
+                    }
+                }
+            }
+        });
+        alertOpcion.show();
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CALL_PHONE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // PERMISO CONCEDIDO, procede a realizar lo que tienes que hacer
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+telefono));
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+                    startActivity(intent);
+                    Toast.makeText(getApplicationContext(),"Permiso consdido :",Toast.LENGTH_SHORT).show();
+
+                } else {
+                    // PERMISO DENEGADO
+                }
+                return;
+            }
+        }
+    }
 
 }

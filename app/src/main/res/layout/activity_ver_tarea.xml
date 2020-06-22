@@ -82,14 +82,15 @@
         />
 
     <TextView
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="20dp"
-        android:textSize="15sp"
-        android:textColor="#9AFFFFFF"
         android:id="@+id/verTareaCreador"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="fulano@gmail.com" />
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"
+        android:onClick="creador"
+        android:text="fulano@gmail.com"
+        android:textColor="#9AFFFFFF"
+        android:textSize="15sp" />
 </LinearLayout>
 
     <LinearLayout
@@ -106,14 +107,15 @@
         android:layout_height="wrap_content"
         android:text="Desarrollado por:" />
 
-    <TextView
+        <TextView
 
-        android:textSize="15sp"
-        android:textColor="#9AFFFFFF"
-        android:id="@+id/verTareaDesarrollador"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
+            android:id="@+id/verTareaDesarrollador"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="realizador"
+            android:text="TextView"
+            android:textColor="#9AFFFFFF"
+            android:textSize="15sp" />
     </LinearLayout>
     <LinearLayout
         android:layout_marginTop="5dp"
@@ -129,13 +131,14 @@
         android:layout_height="wrap_content"
         android:text="Testeado por:" />
 
-    <TextView
-        android:textSize="15sp"
-        android:textColor="#98FFFFFF"
-        android:id="@+id/verTareaTesteador"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ElOtroFulanito@gmail.com" />
+        <TextView
+            android:id="@+id/verTareaTesteador"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="revisador"
+            android:text="ElOtroFulanito@gmail.com"
+            android:textColor="#98FFFFFF"
+            android:textSize="15sp" />
 </LinearLayout>
     <Button
         android:id="@+id/realizar"

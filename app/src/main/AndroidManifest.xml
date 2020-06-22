@@ -2,6 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.organizadortareaskanban">
 
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <!--
+ Needed only if your calling app reads numbers from the `PHONE_STATE`
+         intent action.
+    -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,9 +18,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.usuarios.UsuarioActivity"
-            android:label="Usuario"
-            android:parentActivityName=".ui.tareas.VerTareaActivity"/>
+        <activity android:name=".ui.eMail.EMailActivity"
+            android:parentActivityName=".ui.tareas.TareasActivity"/>
+        <activity
+            android:name=".ui.usuarios.UsuariosActivity"
+            android:label="Usuarios del Proyecto"
+            android:parentActivityName=".ui.tareas.TareasActivity" />
         <activity
             android:name=".ui.tareas.MisTareasActivity"
             android:label="Mis Tareas"

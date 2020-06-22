@@ -31,7 +31,9 @@ import com.example.organizadortareaskanban.database.ConexionSQLiteHelper;
 import com.example.organizadortareaskanban.database.Utilidades;
 import com.example.organizadortareaskanban.entidades.Proyecto;
 import com.example.organizadortareaskanban.entidades.Tarea;
+import com.example.organizadortareaskanban.entidades.Usuario;
 import com.example.organizadortareaskanban.ui.proyectos.BuscarProyectoActivity;
+import com.example.organizadortareaskanban.ui.usuarios.UsuariosActivity;
 
 import java.util.ArrayList;
 
@@ -222,6 +224,8 @@ public class TareasActivity extends AppCompatActivity implements TareasAdapter.L
     }
 
     private void irTodosLosIntegrantes() {
+        Intent todosLosIntegrantes=new Intent(this, UsuariosActivity.class);
+        startActivity(todosLosIntegrantes);
     }
 
 

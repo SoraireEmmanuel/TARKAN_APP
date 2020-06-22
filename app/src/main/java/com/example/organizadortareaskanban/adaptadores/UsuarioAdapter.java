@@ -28,7 +28,7 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.ViewHold
     }
 
     public interface ListClick{
-        void onListClick(Integer id);
+        void onListClick(Integer id, String destinatario);
     }
 
     @Override
@@ -50,6 +50,7 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView usuarioView, telefono, nombre;
         ImageView foto;
+        String destinatario;
         Integer tel;
         byte[] fotoByte;
         public ViewHolder(@NonNull View itemView) {
@@ -58,22 +59,25 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.ViewHold
             usuarioView=(TextView) itemView.findViewById(R.id.usuarioUsuarioActivity);
             telefono =(TextView) itemView.findViewById(R.id.telefonoUsuarioActivity);
             foto = (ImageView) itemView.findViewById(R.id.fotoUsuarioActivity);
+
             itemView.setOnClickListener(this);
         }
 
         public void asignarDatos(Usuario usuario) {
             usuarioView.setText(usuario.getUsuario());
             nombre.setText(usuario.getNombre());
-            telefono.setText(usuario.getTelefono());
+            telefono.setText(Integer.toString(usuario.getTelefono()));
             tel=usuario.getTelefono();
             fotoByte=usuario.getFoto();
             ByteArrayInputStream imageStream = new ByteArrayInputStream(fotoByte);
             Bitmap image = BitmapFactory.decodeStream(imageStream);
             foto.setImageBitmap(image);
+            destinatario=usuario.getUsuario();
         }
         @Override
         public void onClick(View v) {
-            mOnClickListener.onListClick( tel );
+
+            mOnClickListener.onListClick( tel , destinatario);
         }
     }
 
